@@ -1,0 +1,3 @@
+566c008a4c79233d1812bdfc6460e465e4dd13d27b333866dde60d854d06873b  fedora-minimal-armhf-21.tar.gz
+2facf0436d538253efe44b0cc1dd60cbfbcd5cb1867ff3336c76ff297da06829  fedora-minimal-armhf-22.tar.gz
+39199b7f042208ccd574f0c108c23c02e0b00bf29d64d5cb56b9b8a0e6dab98b  fedora-minimal-armhf-23.tar.gz
