@@ -25,7 +25,7 @@ for arch in $ARCHS; do
 		;;
 		esac
 
-		rootfs_file='fedora-minimal-$arch-$suite.tar.gz'
+		rootfs_file="fedora-minimal-$arch-$suite.tar.gz"
 		checksum=$(grep " $rootfs_file" SHASUMS256.txt)
 		curl -SLO "http://resin-packages.s3.amazonaws.com/fedora/$suite/$rootfs_file"
 		echo "$checksum" | sha256sum -c -
@@ -34,6 +34,11 @@ for arch in $ARCHS; do
 			-e s~#{LABEL}~"$label"~g \
 			-e s~#{QEMU}~"$qemu"~g \
 			-e s~#{ROOTFS}~"ADD $rootfs_file /"~g Dockerfile.tpl > Dockerfile
+
+		if [[ $suite -ge 22 ]]; then
+			# DNF is not working on armhf image so we use yum instead
+			echo "RUN sed -i s~^executable=.*~executable=\"/usr/bin/yum-deprecated\"~g /usr/bin/yum" >> Dockerfile
+		fi
 
 		docker build -t $repo:$suite .
 		rm -rf "$rootfs_file"
