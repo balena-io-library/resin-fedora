@@ -20,14 +20,18 @@ for arch in $ARCHS; do
 			docker tag -f $repo:$suite $repo:latest
 		fi
 	done
+
+	docker push $repo
+
+	# Clean up unnecessarry docker images after pushing
+	if [ $? -eq 0 ]; then
+		for suite in $SUITES; do
+			docker rmi -f $repo:$suite
+			docker rmi -f $repo:$suite-$date
+		done
+	fi
 done
 
-docker push $repo
 
-# Clean up unnecessarry docker images after pushing
-if [ $? -eq 0 ]; then
-	for suite in $SUITES; do
-		docker rmi -f $repo:$suite
-		docker rmi -f $repo:$suite-$date
-	done
-fi
+
+
