@@ -1,3 +1,5 @@
 566c008a4c79233d1812bdfc6460e465e4dd13d27b333866dde60d854d06873b  fedora-minimal-armhf-21.tar.gz
 2facf0436d538253efe44b0cc1dd60cbfbcd5cb1867ff3336c76ff297da06829  fedora-minimal-armhf-22.tar.gz
 39199b7f042208ccd574f0c108c23c02e0b00bf29d64d5cb56b9b8a0e6dab98b  fedora-minimal-armhf-23.tar.gz
+fbfc143c32f5eeeb733e2be5d39a8b5ecaddf3fdaf25751001cb1b8530af2fb1  Fedora-Docker-Base-23.armv7hf.tar.xz
+2a82b76a1d7be0e215269f5ff1ee33b6961343da16d484da469bfcd51e9bb08d  Fedora-Docker-Base-24.armv7hf.tar.xz
