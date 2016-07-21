@@ -34,10 +34,10 @@ for arch in $ARCHS; do
 			-e s~#{QEMU}~"$qemu"~g \
 			-e s~#{ROOTFS}~"ADD $rootfs_file /"~g Dockerfile.tpl > Dockerfile
 
-		if [[ $suite -ge 22 ]]; then
+		#if [[ $suite -le 22 ]]; then
 			# DNF is not working on armhf image so we use yum instead
-			echo "RUN sed -i s~^executable=.*~executable=\"/usr/bin/yum-deprecated\"~g /usr/bin/yum" >> Dockerfile
-		fi
+		#	echo "RUN sed -i s~^executable=.*~executable=\"/usr/bin/yum-deprecated\"~g /usr/bin/yum" >> Dockerfile
+		#fi
 
 		docker build -t $repo:$suite .
 		rm -rf "$rootfs_file"
