@@ -17,27 +17,24 @@ for arch in $ARCHS; do
 
 		case "$arch" in
 		'armhf')
-			baseImage='scratch'
 			label='io.resin.architecture="armhf" io.resin.qemu.version="'$QEMU_VERSION'"'
 			qemu='COPY qemu-arm-static /usr/bin/'
 			repo="resin/$arch-fedora"
 		;;
 		esac
 
-		rootfs_file="fedora-minimal-$arch-$suite.tar.gz"
+		rootfs_file="Fedora-Docker-Base-$suite.$arch.tar.xz"
 		checksum=$(grep " $rootfs_file" SHASUMS256.txt)
 		curl -SLO "http://resin-packages.s3.amazonaws.com/fedora/$suite/$rootfs_file"
 		echo "$checksum" | sha256sum -c -
+		rm -rf tmp
+		mkdir tmp
+		tar -xJvf $rootfs_file -C tmp --strip-components=1
+		docker import tmp/layer.tar $repo:$suite
 
-		sed -e s~#{FROM}~"$baseImage"~g \
+		sed -e s~#{FROM}~"$repo:$suite"~g \
 			-e s~#{LABEL}~"$label"~g \
-			-e s~#{QEMU}~"$qemu"~g \
-			-e s~#{ROOTFS}~"ADD $rootfs_file /"~g Dockerfile.tpl > Dockerfile
-
-		if [[ $suite -ge 22 ]]; then
-			# DNF is not working on armhf image so we use yum instead
-			echo "RUN sed -i s~^executable=.*~executable=\"/usr/bin/yum-deprecated\"~g /usr/bin/yum" >> Dockerfile
-		fi
+			-e s~#{QEMU}~"$qemu"~g Dockerfile.tpl > Dockerfile
 
 		docker build -t $repo:$suite .
 		rm -rf "$rootfs_file"
