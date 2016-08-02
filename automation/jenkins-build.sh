@@ -6,7 +6,7 @@ set -o pipefail
 export SUITES='23 24'
 export ARCHS='armv7hf'
 #TODO: add i386 and amd64
-LATEST='22'
+LATEST='24'
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 date=$(date +'%Y%m%d' -u)
 
