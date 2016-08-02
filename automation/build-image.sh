@@ -16,8 +16,8 @@ for arch in $ARCHS; do
 	for suite in $SUITES; do
 
 		case "$arch" in
-		'armhf')
-			label='io.resin.architecture="armhf" io.resin.qemu.version="'$QEMU_VERSION'"'
+		'armv7hf')
+			label='io.resin.architecture="armv7hf" io.resin.qemu.version="'$QEMU_VERSION'"'
 			qemu='COPY qemu-arm-static /usr/bin/'
 			repo="resin/$arch-fedora"
 		;;
