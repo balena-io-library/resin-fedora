@@ -3,14 +3,19 @@
 set -o errexit
 set -o pipefail
 
-QEMU_VERSION='2.5.0-resin-rc3'
-QEMU_SHA256='dc36002fd3e362710e1654c4dfdc84a064b710e10a2323e8e4c8e24cb3921818'
+QEMU_VERSION='2.5.0-resin-rc3-arm'
+QEMU_SHA256='107f0585f2b98a149b0ff013ec068ac24c6cfc402cd438b6da5251406bcd564c'
+QEMU_AARCH64_VERSION='2.5.0-resin-rc3-aarch64'
+QEMU_AARCH64_SHA256='d23d8d071f291930fc727cd752b4b0b39a159138efdceb0858dec9710698db9f'
 
 # Download QEMU
-curl -SLO https://github.com/resin-io/qemu/releases/download/$QEMU_VERSION/qemu-$QEMU_VERSION.tar.gz \
-	&& echo "$QEMU_SHA256  qemu-$QEMU_VERSION.tar.gz" > qemu-$QEMU_VERSION.tar.gz.sha256sum \
-	&& sha256sum -c qemu-$QEMU_VERSION.tar.gz.sha256sum \
+curl -SLO https://github.com/resin-io/qemu/releases/download/qemu-$QEMU_VERSION/qemu-$QEMU_VERSION.tar.gz \
+	&& echo "$QEMU_SHA256  qemu-$QEMU_VERSION.tar.gz" | sha256sum -c - \
 	&& tar -xz --strip-components=1 -f qemu-$QEMU_VERSION.tar.gz
+curl -SLO https://github.com/resin-io/qemu/releases/download/qemu-$QEMU_AARCH64_VERSION/qemu-$QEMU_AARCH64_VERSION.tar.gz \
+	&& echo "$QEMU_AARCH64_SHA256  qemu-$QEMU_AARCH64_VERSION.tar.gz" | sha256sum -c - \
+	&& tar -xz --strip-components=1 -f qemu-$QEMU_AARCH64_VERSION.tar.gz
+chmod +x qemu-arm-static qemu-aarch64-static
 
 for arch in $ARCHS; do
 	for suite in $SUITES; do
@@ -20,6 +25,18 @@ for arch in $ARCHS; do
 			label='io.resin.architecture="armv7hf" io.resin.qemu.version="'$QEMU_VERSION'"'
 			qemu='COPY qemu-arm-static /usr/bin/'
 			repo="resin/$arch-fedora"
+			template='Dockerfile.tpl'
+		;;
+		'aarch64')
+
+			if [ $suite == '23' ]; then
+				continue
+			fi
+
+			label='io.resin.architecture="aarch64" io.resin.qemu.version="'$QEMU_AARCH64_VERSION'"'
+			qemu='COPY qemu-aarch64-static /usr/bin/'
+			repo="resin/$arch-fedora"
+			template='Dockerfile.aarch64.tpl'
 		;;
 		esac
 
@@ -34,7 +51,7 @@ for arch in $ARCHS; do
 
 		sed -e s~#{FROM}~"$repo:$suite"~g \
 			-e s~#{LABEL}~"$label"~g \
-			-e s~#{QEMU}~"$qemu"~g Dockerfile.tpl > Dockerfile
+			-e s~#{QEMU}~"$qemu"~g "$template" > Dockerfile
 
 		docker build -t $repo:$suite .
 		rm -rf "$rootfs_file"
