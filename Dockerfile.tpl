@@ -16,11 +16,12 @@ RUN mkdir -p /etc/dnf/vars \
 RUN dnf update -y \
     && dnf install -y \
         ca-certificates \
-        tar \
+        findutils \
+        hostname \
         systemd \
+        tar \
         udev \
         which \
-        hostname \
     && dnf clean all
 
 ENV container docker
