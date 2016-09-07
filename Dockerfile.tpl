@@ -44,5 +44,6 @@ COPY launch.service /etc/systemd/system/launch.service
 
 RUN systemctl enable launch.service systemd-udevd
 
+STOPSIGNAL 37
 VOLUME ["/sys/fs/cgroup"]
 ENTRYPOINT ["/usr/bin/entry.sh"]
