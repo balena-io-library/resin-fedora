@@ -7,17 +7,21 @@ LABEL #{LABEL}
 COPY resolv.conf /etc/resolv.conf
 
 # Few tweaks for Fedora base image
-RUN rm -rf /tmp/* \
+RUN mkdir -p /etc/dnf/vars \
+    && echo "armhfp" > /etc/dnf/vars/basearch \
+    && echo "armv7hl" > /etc/dnf/vars/arch \
+    && rm -rf /tmp/* \
     && touch /etc/machine-id
 
 RUN dnf update -y \
     && dnf install -y \
         ca-certificates \
-        tar \
+        findutils \
+        hostname \
         systemd \
+        tar \
         udev \
         which \
-        hostname \
     && dnf clean all
 
 ENV container docker

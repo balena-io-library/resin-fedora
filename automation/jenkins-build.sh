@@ -4,7 +4,7 @@ set -o errexit
 set -o pipefail
 
 export SUITES='23 24'
-export ARCHS='armv7hf aarch64'
+export ARCHS='armv7hf aarch64 amd64'
 #TODO: add i386 and amd64
 LATEST='24'
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
