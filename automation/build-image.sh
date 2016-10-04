@@ -25,7 +25,7 @@ for arch in $ARCHS; do
 			label='io.resin.architecture="armv7hf" io.resin.qemu.version="'$QEMU_VERSION'"'
 			qemu='COPY qemu-arm-static /usr/bin/'
 			repo="resin/$arch-fedora"
-			template='Dockerfile.tpl'
+			template='Dockerfile.armv7hf.tpl'
 		;;
 		'aarch64')
 
@@ -36,24 +36,32 @@ for arch in $ARCHS; do
 			label='io.resin.architecture="aarch64" io.resin.qemu.version="'$QEMU_AARCH64_VERSION'"'
 			qemu='COPY qemu-aarch64-static /usr/bin/'
 			repo="resin/$arch-fedora"
-			template='Dockerfile.aarch64.tpl'
+			template='Dockerfile.tpl'
+		;;
+		'amd64')
+			label='io.resin.architecture="amd64"'
+			qemu=''
+			repo="fedora"
+			template='Dockerfile.tpl'
 		;;
 		esac
 
-		rootfs_file="Fedora-Docker-Base-$suite.$arch.tar.xz"
-		checksum=$(grep " $rootfs_file" SHASUMS256.txt)
-		curl -SLO "http://resin-packages.s3.amazonaws.com/fedora/$suite/$rootfs_file"
-		echo "$checksum" | sha256sum -c -
-		rm -rf tmp
-		mkdir tmp
-		tar -xJvf $rootfs_file -C tmp --strip-components=1
-		docker import tmp/layer.tar $repo:$suite
+		if [ $arch != 'amd64' ]; then
+			rootfs_file="Fedora-Docker-Base-$suite.$arch.tar.xz"
+			checksum=$(grep " $rootfs_file" SHASUMS256.txt)
+			curl -SLO "http://resin-packages.s3.amazonaws.com/fedora/$suite/$rootfs_file"
+			echo "$checksum" | sha256sum -c -
+			rm -rf tmp
+			mkdir tmp
+			tar -xJvf $rootfs_file -C tmp --strip-components=1
+			docker import tmp/layer.tar $repo:$suite
+		fi
 
 		sed -e s~#{FROM}~"$repo:$suite"~g \
 			-e s~#{LABEL}~"$label"~g \
 			-e s~#{QEMU}~"$qemu"~g "$template" > Dockerfile
 
-		docker build -t $repo:$suite .
+		docker build -t resin/$arch-fedora:$suite .
 		rm -rf "$rootfs_file"
 	done
 done
