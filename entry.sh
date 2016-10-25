@@ -1,5 +1,18 @@
 #!/bin/bash
 
+set -m
+
+function start_udev()
+{
+	udevd &
+	udevadm trigger &> /dev/null
+}
+
+function remove_buildtime_env_var()
+{
+	unset QEMU_CPU
+}
+
 # Send SIGTERM to child processes of PID 1.
 function signal_handler()
 {
@@ -61,22 +74,26 @@ function init_non_systemd()
 	# trap the stop signal then send SIGTERM to user processes
 	trap signal_handler SIGRTMIN+3 SIGTERM
 
-	udevadm trigger &> /dev/null
-	
 	CMD=$(which "$1")
 	# echo error message, when executable file doesn't exist.
 	if [ $? == '0' ]; then
 		shift
+		if [ ! -z "$RESIN" ] && [ ! -z "$RESIN_DEVICE_UUID" ]; then
+			# run this on resin device only
+			start_udev
+		fi
 		"$CMD" "$@" &
 		pid=$!
-		wait $pid
+		fg > /dev/null
 	else
 		echo "Command not found: $1"
 		exit 1
 	fi
 }
 
-if [ ! -z "$RESIN_SUPERVISOR_API_KEY" ] && [ ! -z "$RESIN_DEVICE_UUID" ]; then
+remove_buildtime_env_var
+
+if [ ! -z "$RESIN" ] && [ ! -z "$RESIN_DEVICE_UUID" ]; then
 	# run this on resin device only
 	update_hostname
 	mount_dev
