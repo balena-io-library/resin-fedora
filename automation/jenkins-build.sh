@@ -18,9 +18,9 @@ for arch in $ARCHS; do
 			continue
 		fi
 		repo="resin/$arch-fedora"
-		docker tag -f $repo:$suite $repo:$suite-$date
+		docker tag $repo:$suite $repo:$suite-$date
 		if [ $LATEST == $suite ]; then
-			docker tag -f $repo:$suite $repo:latest
+			docker tag $repo:$suite $repo:latest
 		fi
 	done
 
