@@ -4,3 +4,5 @@
 fbfc143c32f5eeeb733e2be5d39a8b5ecaddf3fdaf25751001cb1b8530af2fb1  Fedora-Docker-Base-23.armv7hf.tar.xz
 2a82b76a1d7be0e215269f5ff1ee33b6961343da16d484da469bfcd51e9bb08d  Fedora-Docker-Base-24.armv7hf.tar.xz
 bbe6176d408ce659a1c5031e57677f53a99216164973fe24d9a780361da1fc8d  Fedora-Docker-Base-24.aarch64.tar.xz
+95df044b34edf5e0ffe5f5b4903b911e8a5f87b7909f4e2dadd3a279afb37f41  Fedora-Docker-Base-25.armv7hf.tar.xz
+53066d57edb0019bb8bd8a22f6cd94f70281b3094b79b80f8a0834f90b784f3a  Fedora-Docker-Base-25.aarch64.tar.xz
